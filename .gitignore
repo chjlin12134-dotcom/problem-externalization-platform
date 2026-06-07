@@ -1,0 +1,22 @@
+# Large binaries (exceeds GitHub 100MB limit)
+外化故事繪本集/灰藍色的陪伴.pdf
+外化故事繪本集/漂流的靈魂.pdf
+外化故事繪本集/外化故事繪本集/學生云端外化作品.xlsx
+外化故事繪本集/**/*.pptx
+外化故事繪本集/**/*.m4a
+
+# Python cache
+__pycache__/
+*.pyc
+.pydeps/
+
+# Auto-generated frame images
+docs/output/*/*_frames/
+docs/output/pptx/*_frames/
+
+# Audio extraction temp
+*.wav
+
+# System
+Thumbs.db
+.DS_Store

@@ -1,0 +1,59 @@
+[
+  {
+    "file": "C:\\Users\\June\\Documents\\Codex\\codex-project 0530\\外化故事繪本集\\巢 外 的 守 護 ～生命的轉折.pdf",
+    "name": "巢 外 的 守 護 ～生命的轉折.pdf",
+    "size_mb": 20.5,
+    "pages": 15,
+    "text_chars_first3": 0,
+    "text_sample": [
+      "",
+      "",
+      ""
+    ],
+    "pdfium_pages": 15,
+    "thumbnail": "C:\\Users\\June\\Documents\\New project 2\\output\\feasibility\\pdf_01_page1.jpg",
+    "render_ok": true,
+    "page0_size": [
+      482,
+      269
+    ]
+  },
+  {
+    "file": "C:\\Users\\June\\Documents\\Codex\\codex-project 0530\\外化故事繪本集\\漂流的靈魂.pdf",
+    "name": "漂流的靈魂.pdf",
+    "size_mb": 247.3,
+    "pages": 10,
+    "text_chars_first3": 0,
+    "text_sample": [
+      "",
+      "",
+      ""
+    ],
+    "pdfium_pages": 10,
+    "thumbnail": "C:\\Users\\June\\Documents\\New project 2\\output\\feasibility\\pdf_02_page1.jpg",
+    "render_ok": true,
+    "page0_size": [
+      278,
+      215
+    ]
+  },
+  {
+    "file": "C:\\Users\\June\\Documents\\Codex\\codex-project 0530\\外化故事繪本集\\灰藍色的陪伴.pdf",
+    "name": "灰藍色的陪伴.pdf",
+    "size_mb": 174.6,
+    "pages": 12,
+    "text_chars_first3": 0,
+    "text_sample": [
+      "",
+      "",
+      ""
+    ],
+    "pdfium_pages": 12,
+    "thumbnail": "C:\\Users\\June\\Documents\\New project 2\\output\\feasibility\\pdf_03_page1.jpg",
+    "render_ok": true,
+    "page0_size": [
+      278,
+      215
+    ]
+  }
+]

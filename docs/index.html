@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>問題「外化」AI自助應用暨作品分享平台</title>
+    <meta
+      name="description"
+      content="問題外化 AI 自助應用暨作品分享平台。"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-overlay" id="top">
+        <div class="platform-title">問題「外化」 AI自助應用暨作品分享平台</div>
+        <div class="hero-copy">
+          <h1>
+            <span class="main-title">人不是問題，問題才是問題</span>
+          </h1>
+          <div class="hero-credit">
+            <h3>佛光大學生命學研究中心 中華角落關懷互助協會 公益協作</h3>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="platform-gateway" aria-label="平台功能選擇">
+        <div class="gateway-heading">
+          <p class="section-kicker">平台入口</p>
+        </div>
+        <div class="gateway-grid">
+          <article class="gateway-panel showcase-panel">
+            <div>
+              <p class="panel-label">外化繪本創作藝廊</p>
+              <h3>與作者生命經驗相遇</h3>
+            </div>
+            <a class="primary-button" href="#gallery">瀏覽問題外化故事與作品</a>
+          </article>
+
+          <article class="gateway-panel practice-panel">
+            <div>
+              <p class="panel-label">AI 自助應用</p>
+              <h3>外化自助習作與繪本生成</h3>
+              <p>從問題外化對話走向繪本創作。</p>
+            </div>
+            <div class="resource-list">
+              <a class="resource-item" href="resources/problem-externalization-practice/Skill.md" target="_blank">
+                <span>《把「問題」請出來》</span>
+                <strong>請看說明</strong>
+              </a>
+              <a class="resource-item" href="resources/storybook-generation/Skill.md" target="_blank">
+                <span>《把「問題」畫成繪本》</span>
+                <strong>請看說明</strong>
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="controls" id="gallery">
+        <div>
+          <h2>作品選片牆</h2>
+          <p>每一件作品都是一次把問題請出來，重新觀看關係的嘗試。</p>
+        </div>
+        <div class="gallery-summary" id="gallerySummary" aria-live="polite"></div>
+      </section>
+
+      <section class="gallery-grid" id="storyGrid" aria-live="polite"></section>
+
+      <section class="support" id="support">
+        <div>
+          <h2 class="support-title">Public Good</h2>
+          <p class="support-invite">歡迎您將故事、作品申請加入本平台分享。</p>
+          <p class="support-copy">
+            您可以運用本平台外化 AI 協助創作您的作品，並透過申請與贊助協助您製作成影音作品於本平台公開分享。您的每一份支持，都將用於素材整理、字幕校對、配音製作、網站維護，以及集體敘說活動的推動與辦理。
+          </p>
+          <p class="support-copy">
+            誠摯邀請您參與「平民角落．社會共學」，協力讓生命經驗轉化為彼此參看、相互支撐與共同前行的力量，一起為一個差異共在、更友善的世界而努力。
+          </p>
+        </div>
+        <a class="primary-button" href="#apply-support">我想要申請與贊助</a>
+      </section>
+
+      <section class="apply-support" id="apply-support">
+        <div>
+          <p class="section-kicker">Apply & Support</p>
+          <h2>申請與贊助方式準備中</h2>
+          <p>這一頁之後會提供作品申請、授權確認、素材上傳與贊助支持的方式。</p>
+        </div>
+        <div class="method-grid">
+          <article>
+            <h3>作品申請</h3>
+            <p>可規劃 Google 表單，收集作者顯示名稱、作品連結、PDF、授權同意與是否可公開。</p>
+          </article>
+          <article>
+            <h3>贊助支持</h3>
+            <p>可放置協會官方匯款資訊、定期定額連結、收據需求與聯絡方式。</p>
+          </article>
+          <article>
+            <h3>素材補交</h3>
+            <p>可讓作者補交逐頁文字稿、朗讀音檔、封面圖與影片轉製授權。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="viewerDialog" aria-labelledby="viewerTitle">
+      <div class="dialog-head">
+        <div>
+          <p id="viewerMeta"></p>
+          <h2 id="viewerTitle"></h2>
+        </div>
+        <button id="closeViewer" type="button" aria-label="關閉檢視">×</button>
+      </div>
+      <div id="viewerFrame" class="viewer-frame"></div>
+      <a id="openExternal" class="secondary-button" target="_blank" rel="noreferrer">開啟原始連結</a>
+    </dialog>
+
+    <footer>
+      <p>© 中華角落關懷互助協會・公益分享用途</p>
+    </footer>
+
+    <script src="works-data.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
