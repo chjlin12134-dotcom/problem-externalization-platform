@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陪我想事情的石頭</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #0A0A0A; font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; }
+
+#player {
+  position: relative;
+  width: 1920px; height: 1080px;
+  margin: 0 auto;
+  transform-origin: top left;
+  overflow: hidden;
+  background: #0A0A0A;
+}
+
+.slide {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.slide.active { opacity: 1; z-index: 1; }
+.slide .bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+.slide .bg.kenburns {
+  animation: kenzoom linear forwards;
+}
+@keyframes kenzoom {
+  from { transform: scale(1.0); }
+  to { transform: scale(1.07); }
+}
+
+/* Title card */
+.title-card {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.5);
+}
+.title-card h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700; font-size: 72px;
+  color: #F5EFE2;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.55);
+  margin-bottom: 20px;
+  letter-spacing: 8px;
+}
+.title-card p {
+  font-size: 24px;
+  color: #E8B14A;
+  letter-spacing: 4px;
+}
+
+/* Subtitle */
+.subtitle {
+  position: absolute;
+  bottom: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  border-radius: 6px;
+  padding: 12px 24px;
+  max-width: 80%;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.subtitle.show { opacity: 1; }
+.subtitle span {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400; font-size: 26px;
+  color: #FFFFFF;
+  line-height: 1.5;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* Chapter indicator */
+.chapter {
+  position: absolute;
+  top: 30px; left: 30px;
+  z-index: 10;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300; font-size: 14px;
+  color: #E8B14A;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.chapter.show { opacity: 1; }
+
+/* Progress bar */
+.progress-container {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 2px;
+  z-index: 10;
+  background: rgba(255,255,255,0.1);
+}
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #E8B14A;
+  transition: width 0.3s linear;
+}
+
+/* Play overlay */
+#playOverlay {
+  position: absolute; inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.7);
+  cursor: pointer;
+}
+#playOverlay .btn {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 3px solid #F5EFE2;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center; align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+#playOverlay .btn:hover {
+  background: rgba(232,177,74,0.3);
+  border-color: #E8B14A;
+  transform: scale(1.05);
+}
+#playOverlay .btn svg {
+  fill: #F5EFE2;
+  width: 50px; height: 50px;
+  margin-left: 6px;
+}
+#playOverlay.hidden { display: none; }
+
+/* Ending */
+.ending-text {
+  position: absolute; bottom: 15%;
+  left: 50%; transform: translateX(-50%);
+  z-index: 5;
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700; font-size: 40px;
+  color: #F5EFE2;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.55);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 2s ease;
+  letter-spacing: 4px;
+}
+.ending-text.show { opacity: 1; }
+
+.fade-black {
+  position: absolute; inset: 0;
+  z-index: 3;
+  background: #0A0A0A;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+.fade-black.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="player">
+  <!-- Slide container -->
+  <div id="slides"></div>
+
+  <!-- Fade to black overlay -->
+  <div class="fade-black" id="fadeBlack"></div>
+
+  <!-- Ending text over final slide -->
+  <div class="ending-text" id="endingText"></div>
+
+  <!-- Chapter number -->
+  <div class="chapter" id="chapterNum"></div>
+
+  <!-- Subtitle -->
+  <div class="subtitle" id="subtitleBox"><span id="subtitleText"></span></div>
+
+  <!-- Progress bar -->
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+  <!-- Play overlay -->
+  <div id="playOverlay">
+    <div class="btn" id="playBtn">
+      <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+    </div>
+  </div>
+
+  <!-- Audio elements -->
+  <audio id="bgmAudio" preload="auto" loop></audio>
+</div>
+
+<script>
+// ======================== CONFIG ========================
+const IMG_BASE = 'assets/images/page_';
+const NARR_BASE = 'narration/';
+const BGM_SRC = 'assets/audio/Morning_in_the_Valley.mp3';
+const TOTAL_SEGMENTS = 13;
+
+// TTS durations from ffprobe (seconds) + image assignment
+const segData = [
+  { img: '01', dur: 14.86, subtitle: '靜慈是一位國小老師。教室裡的空氣總是充滿了粉筆灰與孩子們活潑的笑鬧聲，她每天都在這小小的空間裡，陪伴著孩子們一點一滴長大。' },
+  { img: '02', dur: 16.08, subtitle: '白天的校園總是忙碌且充實，但有些事情，只會在萬籟俱寂的夜晚悄悄跑出來。當靜慈坐在書桌前批改聯絡簿時，桌角出現了一顆小小的灰色石頭。' },
+  { img: '03', dur: 16.46, subtitle: '石頭總是在夜深人靜時變得沉重。當靜慈躺在床邊回想著這一天發生的所有細節，石頭慢慢變大，沉沉地壓在她的胸口上，讓她覺得呼吸有些侷促。' },
+  { img: '04', dur: 18.17, subtitle: '石頭在她的心頭低語，腦海中不斷浮現教室裡的畫面：因為挫折而尖叫的孩子、憤怒摔門的少年，還有那個不肯踏進教室的身影。石頭不停問她：「是不是還有什麼妳沒有做好？」' },
+  { img: '05', dur: 21.10, subtitle: '這樣的日子持續了很久，直到有一天，靜慈決定不再逃避。她停下了所有動作，深呼吸後第一次正眼看向那顆重重的石頭。她驚訝地發現，原來這顆石頭並不是她自己，它是一個獨立的存在。' },
+  { img: '06', dur: 14.66, subtitle: '靜慈拿起了紙和筆，在石頭旁邊坐了下來。她決定給這個一直跟著她的夥伴一個正式的稱呼。她在紙上工整地寫下：「尋找的石頭」。' },
+  { img: '07', dur: 17.14, subtitle: '命名之後，靜慈開始能聽見石頭的聲音。它不再只是沉重的壓力，而是像一個謹慎的夥伴，在耳邊輕聲問著：「還有沒有別的方法？」「還有沒有我們漏掉的細節？」' },
+  { img: '08', dur: 19.18, subtitle: '靜慈帶著石頭來到了公園的長椅。她發現，當她願意傾聽時，石頭不再壓得她喘不過氣。石頭輕聲說：「我不是想責怪妳，我只是想陪妳一起想一想，怎麼樣對孩子更好。」' },
+  { img: '09', dur: 18.70, subtitle: '靜慈拿起了電話，與一位學生的家長交談。電話另一端的家長認真地聽著靜慈的觀察。那一刻，靜慈感覺到心中的重量減輕了，因為有些時候，她並不是一個人面對困難。' },
+  { img: '10', dur: 18.74, subtitle: '靜慈回想著自己這段時間以來的努力：一次又一次聯繫家長、耐心地尋找適合的教材、試過一個又一個方法。她驚訝地發現，雖然路途艱辛，但身後已經留下許多發光的小腳印。' },
+  { img: '11', dur: 18.91, subtitle: '關係開始改變了。石頭沒有離開，但它從靜慈的胸口移到了她身旁的椅子上。它的體積變小了，顏色也從深灰變成了溫和的淺灰色，表面那細微的裂紋看起來像是歲月的勳章。' },
+  { img: '12', dur: 16.37, subtitle: '當靜慈在教室裡陪伴著不同個性的孩子時，石頭安靜地坐在窗邊。每當她遇到教學上的挑戰，它不再讓她自我懷疑，而是陪著她一起冷靜地思考下一步。' },
+  { img: '13', dur: 17.09, subtitle: '夕陽餘暉灑滿了教室。靜慈和石頭並肩坐著，看著操場上奔跑的孩子們。她在心中默默記下：「每個孩子都有適合他的教育方式，我只是還沒找到而已。」' }
+];
+
+// Opening title + ending durations
+const OPENING_DUR = 5.0;
+const ENDING_DUR = 8.0;
+
+// Compute cumulative timeline
+const segments = [];
+let t = 0;
+// Opening title
+segments.push({ type: 'opening', start: t, end: t + OPENING_DUR, img: '01', subtitle: '' });
+t += OPENING_DUR;
+
+for (let i = 0; i < segData.length; i++) {
+  segments.push({
+    type: 'narration',
+    idx: i + 1,
+    start: t,
+    end: t + segData[i].dur,
+    img: segData[i].img,
+    subtitle: segData[i].subtitle,
+    narrFile: `${NARR_BASE}${String(i+1).padStart(2,'0')}.mp3`
+  });
+  t += segData[i].dur;
+}
+
+// Ending (page_14, no narration, BGM fade out)
+segments.push({ type: 'ending', start: t, end: t + ENDING_DUR, img: '14', subtitle: '' });
+t += ENDING_DUR;
+
+const TOTAL_DUR = t;
+
+// ======================== DOM REFS ========================
+const slidesEl = document.getElementById('slides');
+const subtitleBox = document.getElementById('subtitleBox');
+const subtitleText = document.getElementById('subtitleText');
+const chapterNum = document.getElementById('chapterNum');
+const progressBar = document.getElementById('progressBar');
+const playOverlay = document.getElementById('playOverlay');
+const playBtn = document.getElementById('playBtn');
+const fadeBlack = document.getElementById('fadeBlack');
+const endingText = document.getElementById('endingText');
+const bgm = document.getElementById('bgmAudio');
+
+// ======================== BUILD SLIDES ========================
+const slideEls = [];
+for (let i = 1; i <= 14; i++) {
+  const div = document.createElement('div');
+  div.className = 'slide';
+  const bg = document.createElement('div');
+  bg.className = 'bg';
+  const num = String(i).padStart(2, '0');
+  bg.style.backgroundImage = `url('${IMG_BASE}${num}.jpg')`;
+  div.appendChild(bg);
+  slidesEl.appendChild(div);
+  slideEls.push(div);
+}
+
+// Opening title overlay on slide 0
+const titleCard = document.createElement('div');
+titleCard.className = 'title-card';
+titleCard.innerHTML = '<h1>陪我想事情的石頭</h1><p>問題外化療癒故事</p>';
+slideEls[0].appendChild(titleCard);
+
+// Ending text
+endingText.textContent = '每個孩子都有適合他的教育方式，我只是還沒找到而已。';
+
+// ======================== BGM WITH WEB AUDIO API ========================
+let audioCtx;
+let bgmSource;
+let gainNode;
+
+function initBGM() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  gainNode = audioCtx.createGain();
+  gainNode.connect(audioCtx.destination);
+  bgmSource = audioCtx.createMediaElementSource(bgm);
+  bgmSource.connect(gainNode);
+  bgm.loop = true;
+}
+
+let currentGain = 0;
+let targetGain = 0;
+let fadeStartTime = 0;
+let fadeDuration = 0;
+let isFading = false;
+
+function setBGMGain(target, duration) {
+  targetGain = target;
+  fadeStartTime = performance.now() / 1000;
+  fadeDuration = duration;
+  isFading = true;
+}
+
+// ======================== PLAYER STATE ========================
+let isPlaying = false;
+let currentSegIdx = -1;
+let playerStartTime = 0;
+let currentNarrAudio = null;
+let rafId = null;
+let preloaded = false;
+
+// Preload narration audio
+function preloadNarrations() {
+  if (preloaded) return;
+  preloaded = true;
+  for (let i = 1; i <= TOTAL_SEGMENTS; i++) {
+    const a = new Audio();
+    const num = String(i).padStart(2, '0');
+    a.src = `${NARR_BASE}${num}.mp3`;
+    a.preload = 'auto';
+    a.volume = 1.0;
+  }
+}
+
+// ======================== SEGMENT SWITCHING ========================
+function showSegment(idx) {
+  // Hide all slides
+  slideEls.forEach(s => s.classList.remove('active'));
+  slideEls.forEach(s => {
+    const bg = s.querySelector('.bg');
+    if (bg) bg.classList.remove('kenburns');
+  });
+
+  const seg = segments[idx];
+  if (!seg) return;
+
+  currentSegIdx = idx;
+
+  // Determine which image to show
+  let imgIdx = parseInt(seg.img) - 1;
+  if (imgIdx < 0) imgIdx = 0;
+  if (imgIdx >= slideEls.length) imgIdx = slideEls.length - 1;
+
+  // Show slide
+  const slide = slideEls[imgIdx];
+  slide.classList.add('active');
+
+  // Ken Burns
+  const bg = slide.querySelector('.bg');
+  if (bg) {
+    const kenDur = seg.end - seg.start;
+    bg.style.animation = 'none';
+    void bg.offsetHeight; // trigger reflow
+    bg.style.animation = `kenzoom ${kenDur}s linear forwards`;
+    bg.classList.add('kenburns');
+  }
+
+  // Subtitle
+  if (seg.type === 'narration' && seg.subtitle) {
+    subtitleText.textContent = seg.subtitle;
+    subtitleBox.classList.add('show');
+  } else {
+    subtitleBox.classList.remove('show');
+  }
+
+  // Chapter number (for narration segments)
+  if (seg.type === 'narration') {
+    chapterNum.textContent = `${String(seg.idx).padStart(2,'0')} / ${String(TOTAL_SEGMENTS)}`;
+    chapterNum.classList.add('show');
+  } else if (seg.type === 'opening') {
+    chapterNum.classList.remove('show');
+  } else if (seg.type === 'ending') {
+    chapterNum.classList.remove('show');
+  }
+
+  // Ending text
+  if (seg.type === 'ending') {
+    endingText.classList.add('show');
+  } else {
+    endingText.classList.remove('show');
+  }
+
+  // Play narration for this segment
+  if (seg.narrFile) {
+    if (currentNarrAudio) {
+      currentNarrAudio.pause();
+      currentNarrAudio = null;
+    }
+    const narr = new Audio(seg.narrFile);
+    narr.volume = 1.0;
+    narr.play().catch(() => {});
+    currentNarrAudio = narr;
+
+    // Duck BGM during narration
+    setBGMGain(0.08, 0.5);
+  } else {
+    // No narration (opening/ending) - restore BGM
+    if (!seg.narrFile) {
+      setBGMGain(0.25, 0.5);
+    }
+  }
+}
+
+function updateProgress(currentTime) {
+  const pct = (currentTime / TOTAL_DUR) * 100;
+  progressBar.style.width = Math.min(pct, 100) + '%';
+}
+
+// ======================== MAIN LOOP ========================
+function tick() {
+  if (!isPlaying) return;
+
+  const elapsed = (performance.now() / 1000) - playerStartTime;
+
+  // Handle BGM fade
+  if (isFading) {
+    const now = performance.now() / 1000;
+    const elapsedFade = now - fadeStartTime;
+    const progress = Math.min(elapsedFade / fadeDuration, 1);
+    const currentVol = currentGain + (targetGain - currentGain) * progress;
+    gainNode.gain.value = currentVol;
+    if (progress >= 1) {
+      currentGain = targetGain;
+      isFading = false;
+    }
+  }
+
+  // Find current segment
+  let foundIdx = -1;
+  for (let i = 0; i < segments.length; i++) {
+    if (elapsed >= segments[i].start && elapsed < segments[i].end) {
+      foundIdx = i;
+      break;
+    }
+  }
+
+  if (foundIdx !== currentSegIdx && foundIdx >= 0) {
+    // Segment transition - fade to black briefly
+    fadeBlack.classList.add('show');
+    setTimeout(() => {
+      fadeBlack.classList.remove('show');
+      showSegment(foundIdx);
+    }, 400);
+  } else if (foundIdx < 0 && elapsed < TOTAL_DUR) {
+    // Still in current segment (between fade and next)
+  }
+
+  // Ending fade-out: start BGM fade-out 8s before end
+  const remaining = TOTAL_DUR - elapsed;
+  if (remaining <= 8 && remaining > 0) {
+    // Gradually fade BGM
+    const fadeProgress = 1 - (remaining / 8);
+    if (!isFading && gainNode) {
+      setBGMGain(0, 8);
+    }
+  }
+
+  // Update progress bar
+  updateProgress(elapsed);
+
+  // Check if video ended
+  if (elapsed >= TOTAL_DUR) {
+    isPlaying = false;
+    progressBar.style.width = '100%';
+    return;
+  }
+
+  rafId = requestAnimationFrame(tick);
+}
+
+// ======================== START PLAYBACK ========================
+async function startPlayback() {
+  playOverlay.classList.add('hidden');
+
+  // Init Web Audio
+  initBGM();
+
+  // Set BGM source
+  bgm.src = BGM_SRC;
+
+  // Preload narrations
+  preloadNarrations();
+
+  // Start BGM
+  try {
+    await bgm.play();
+  } catch(e) {
+    console.warn('BGM autoplay blocked, will retry on user gesture');
+  }
+
+  // Fade in BGM over 10s
+  currentGain = 0;
+  gainNode.gain.value = 0;
+  setBGMGain(0.25, 10);
+
+  // Start timing
+  playerStartTime = performance.now() / 1000;
+  isPlaying = true;
+
+  // Show first segment (opening title)
+  showSegment(0);
+
+  // Start main loop
+  tick();
+}
+
+// ======================== EVENTS ========================
+playOverlay.addEventListener('click', () => {
+  startPlayback();
+});
+playBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  startPlayback();
+});
+
+// Resize handler
+function resizePlayer() {
+  const p = document.getElementById('player');
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const scale = Math.min(w / 1920, h / 1080);
+  p.style.transform = `scale(${scale})`;
+  p.style.transformOrigin = 'top left';
+}
+window.addEventListener('resize', resizePlayer);
+resizePlayer();
+
+console.log(`Total duration: ${TOTAL_DUR.toFixed(1)}s (${(TOTAL_DUR/60).toFixed(1)}min)`);
+console.log(`Segments: ${segments.length}`);
+</script>
+</body>
+</html>

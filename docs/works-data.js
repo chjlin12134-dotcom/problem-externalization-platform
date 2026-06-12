@@ -128,5 +128,21 @@
     bgm: true,
     status: "已產生字幕時間軸底稿，需聽打校對",
   },
+  {
+    className: "外化故事繪本集",
+    title: "靜慈與尋找的石頭",
+    author: "郁君",
+    type: "video",
+    url: "output/videos/靜慈與尋找的石頭_v3.mp4",
+    sourceUrl:
+      "file:///C:/Users/June/Documents/Codex/codex-project%200530/%E5%A4%96%E5%8C%96%E6%95%85%E4%BA%8B%E7%B9%AA%E6%9C%AC%E9%9B%86/0611%E9%83%81%E5%90%9B/%E3%80%8A%E9%99%AA%E6%88%91%E6%83%B3%E4%BA%8B%E6%83%85%E7%9A%84%E7%9F%B3%E9%A0%AD%E3%80%8B.pdf",
+    theme: "edge-tts 自然語音 × BGM 淡入淡出 × 字幕",
+    thumbnail: "output/feasibility/陪我想事情的石頭_page1.jpg",
+    permission: true,
+    narration: true,
+    subtitles: true,
+    bgm: true,
+    status: "已有配音影片，待補字幕",
+  },
 ];
 
