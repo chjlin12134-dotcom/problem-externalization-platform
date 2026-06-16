@@ -132,7 +132,7 @@
   {
     className: "外化故事繪本集",
     title: "靜慈與尋找的石頭",
-    author: "郁君",
+    author: "劉郁君",
     type: "video",
     url: "output/videos/靜慈與尋找的石頭_v3.mp4",
     sourceUrl:
