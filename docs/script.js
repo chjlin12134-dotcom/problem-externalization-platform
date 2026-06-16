@@ -72,22 +72,15 @@ async function loadFromGoogleSheet() {
 }
 
 async function init() {
-  var sheetData = await loadFromGoogleSheet();
+  // 直接使用静态作品数据
+  stories = [...(window.STORY_WORKS || [])];
+  
+  // 合并本地存储数据（如果有）
   var localData = JSON.parse(localStorage.getItem("externalizedProblemStories") || "[]");
-  var staticData = [...(window.STORY_WORKS || [])];
+  if (localData.length) {
+    stories = stories.concat(localData);
+  }
   
-  // 合并所有数据，静态数据优先（如果标题和作者相同，则使用静态数据）
-  var allData = localData.concat(sheetData);
-  staticData.forEach(function(staticItem) {
-    var exists = allData.some(function(item) {
-      return item.title === staticItem.title && item.author === staticItem.author;
-    });
-    if (!exists) {
-      allData.push(staticItem);
-    }
-  });
-  
-  stories = allData;
   renderStories();
 }
 
