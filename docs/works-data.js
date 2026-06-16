@@ -148,7 +148,7 @@
   {
     className: "外化故事繪本集",
     title: "鬆開的繩子",
-    author: "沅臻",
+    author: "李沅臻",
     type: "video",
     url: "output/videos/鬆開的繩子_有聲影片.mp4",
     thumbnail: "output/feasibility/鬆開的繩子_page1.jpg",
